@@ -1,27 +1,51 @@
-// A widget test: it builds your app in memory and checks what is on screen.
-// Run them all with: flutter test
-//
-// You are not required to write more of these, but a project with a few real
-// tests reads very differently from one with none.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:final_project/main.dart';
+import 'package:provider/provider.dart';
+import 'package:motoparts_manager/app.dart';
+import 'package:motoparts_manager/providers/maintenance_provider.dart';
+import 'package:motoparts_manager/providers/motorcycle_provider.dart';
+import 'package:motoparts_manager/providers/parts_provider.dart';
 
 void main() {
-  testWidgets('home screen shows its title and counts taps', (tester) async {
-    // Build the app. Note we build MyApp directly, not the DevicePreview
-    // wrapper, because a test does not need the phone frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('mobile shell exposes all primary destinations', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
 
-    expect(find.text('It works'), findsOneWidget);
-    expect(find.text('Taps: 0'), findsOneWidget);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => MotorcycleProvider()),
+          ChangeNotifierProvider(create: (_) => PartsProvider()),
+          ChangeNotifierProvider(create: (_) => MaintenanceProvider()),
+        ],
+        child: const MotoPartsApp(),
+      ),
+    );
 
-    // Tap the button, then let the widget rebuild.
-    await tester.tap(find.byType(FilledButton));
-    await tester.pump();
+    expect(find.text('Dashboard'), findsNWidgets(2));
+    expect(find.text('My Bike'), findsOneWidget);
+    expect(find.text('Inventory'), findsOneWidget);
+    expect(find.text('Add Part'), findsOneWidget);
 
-    expect(find.text('Taps: 1'), findsOneWidget);
+    await tester.tap(find.text('Inventory'));
+    await tester.pumpAndSettle();
+    expect(find.text('Parts Inventory'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is TextField &&
+            widget.decoration?.hintText ==
+                'Search part name, SKU, or category...',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Add Part'));
+    await tester.pumpAndSettle();
+    expect(find.text('Identification'), findsOneWidget);
+    expect(find.text('Purchase & Warranty'), findsOneWidget);
+    expect(find.text('Installation'), findsOneWidget);
   });
 }
