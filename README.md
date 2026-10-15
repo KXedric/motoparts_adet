@@ -10,7 +10,9 @@
 
 > One sentence: what this app does, and who it is for.
 
-**Live demo:** https://YOURUSERNAME.github.io/YOUR-REPO/ <!-- GitHub Pages is set up already; replace if you host elsewhere -->
+**Deployment URL:** https://kxedric.github.io/motoparts_adet/ (available after the first successful deployment)
+
+See [deployment setup](docs/07-deployment.md) for publishing and troubleshooting.
 **Demo video:** `docs/demo.mp4` (link it here once it exists)
 **Course:** Applications Development and Emerging Technologies (6ADET), Holy Angel University
 **Author:** Your Name

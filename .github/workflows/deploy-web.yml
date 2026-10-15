@@ -47,6 +47,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Check GitHub Pages configuration
+        uses: actions/configure-pages@v5
+
       # A fresh copy of the template has no Flutter app in it yet. Skip quietly
       # rather than failing, so your repo is not red before you have written
       # anything. Once pubspec.yaml exists, every push deploys.
@@ -70,6 +73,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: '3.44.8'
 
       - if: steps.check.outputs.ready == 'true'
         run: flutter pub get
